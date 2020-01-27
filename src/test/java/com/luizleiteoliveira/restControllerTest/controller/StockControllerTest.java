@@ -17,7 +17,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(StockController.class)
@@ -30,10 +32,19 @@ public class StockControllerTest {
     private StockServices stockServices;
 
     @Test
-    public void shouldReturnJustOneFromResult() throws Exception {
+    public void callingWithoutParameterShouldReturnBadRequest() throws Exception {
         List<Stock> result = new ArrayList<>();
         result.add(new Stock(new Date(),"NEWSTOCK", BigDecimal.TEN));
         Mockito.when(stockServices.createMockStocks(5)).thenReturn(result);
         this.mockMvc.perform(get("/stocks")).andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    public void shouldReturnJustOneFromResult() throws Exception {
+        List<Stock> result = new ArrayList<>();
+        result.add(new Stock(new Date(),"NEWSTOCK", BigDecimal.TEN));
+        Mockito.when(stockServices.createMockStocks(1)).thenReturn(result);
+        this.mockMvc.perform(get("/stocks").queryParam("howMany", "1"))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(content().string(containsString("NEWSTOCK")));
     }
 }
