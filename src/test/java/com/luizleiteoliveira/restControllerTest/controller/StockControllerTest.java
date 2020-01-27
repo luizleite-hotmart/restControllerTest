@@ -20,7 +20,7 @@ import java.util.List;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest
+@WebMvcTest(StockController.class)
 public class StockControllerTest {
 
     @Autowired
@@ -34,6 +34,6 @@ public class StockControllerTest {
         List<Stock> result = new ArrayList<>();
         result.add(new Stock(new Date(),"NEWSTOCK", BigDecimal.TEN));
         Mockito.when(stockServices.createMockStocks(5)).thenReturn(result);
-        this.mockMvc.perform(get("/stocks")).andExpect(MockMvcResultMatchers.status().isOk());
+        this.mockMvc.perform(get("/stocks")).andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 }
